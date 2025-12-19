@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Calendar, MapPin, Tag, FileText, Hash, Link as LinkIcon } from 'lucide-react';
+import { ExternalLink, Calendar, MapPin, Tag, FileText, Hash } from 'lucide-react';
 import { Dataset } from '../types';
 
 interface DatasetItemProps {
@@ -34,7 +34,7 @@ export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
         <div className="flex items-start gap-2">
             <Tag size={14} className="mt-0.5 text-indigo-500 shrink-0" />
             <div>
-                <span className="font-semibold text-gray-700">Category:</span> {dataset.Category}
+                <span className="font-semibold text-gray-700">Category:</span> {dataset.Category ?? 'null'}
             </div>
         </div>
 
@@ -42,7 +42,7 @@ export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
         <div className="flex items-start gap-2">
             <Hash size={14} className="mt-0.5 text-purple-500 shrink-0" />
             <div>
-                <span className="font-semibold text-gray-700">Sub Category:</span> {dataset.Sub_Category}
+                <span className="font-semibold text-gray-700">Sub Category:</span> {dataset.Sub_Category ?? 'null'}
             </div>
         </div>
 
@@ -62,19 +62,23 @@ export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
             </div>
         </div>
 
-        {/* Article ID */}
+        {/* Paper URL */}
         <div className="flex items-start gap-2">
             <FileText size={14} className="mt-0.5 text-gray-400 shrink-0" />
             <div>
-                <span className="font-semibold text-gray-700">Article ID:</span> {dataset.article_id}
-            </div>
-        </div>
-
-        {/* Refs */}
-        <div className="flex items-start gap-2">
-            <LinkIcon size={14} className="mt-0.5 text-gray-400 shrink-0" />
-            <div>
-                <span className="font-semibold text-gray-700">Refs:</span> {dataset.ref.join(', ')}
+                <span className="font-semibold text-gray-700">Paper URL:</span> 
+                {dataset.paper_url !== 'N/A' ? (
+                  <a 
+                    href={dataset.paper_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline ml-1"
+                  >
+                    {dataset.paper_url}
+                  </a>
+                ) : (
+                  <span className="text-gray-400 ml-1">N/A</span>
+                )}
             </div>
         </div>
       </div>

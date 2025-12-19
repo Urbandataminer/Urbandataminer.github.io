@@ -1,11 +1,11 @@
 export interface Dataset {
-  id: string; // Internal unique ID (can be article_id + index)
+  id: string; // Internal unique ID
   Data_Name: string; // Mapped from title
   Data_summary: string; // Mapped from summary
   
   // Filter Dimensions
-  Category: string; // e.g. "Population census..."
-  Sub_Category: string; // e.g. "Detailed demographic breakdown"
+  Category: string | null; // e.g. "Population census..." or null for unmapped categories
+  Sub_Category: string | null; // e.g. "Detailed demographic breakdown" or null for unmapped sub-categories
   Time_Coverage: string; // e.g. "2010-2020", "N/A"
   
   // Additional Metadata
@@ -15,7 +15,7 @@ export interface Dataset {
   
   // References
   ref: string[];
-  article_id: string;
+  paper_url: string;
 }
 
 export interface FilterCounts {
