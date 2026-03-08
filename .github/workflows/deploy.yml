@@ -27,6 +27,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Verify API base is set
+        env:
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+        run: |
+          if [ -z "$VITE_API_BASE" ]; then
+            echo "ERROR: VITE_API_BASE secret is not set. Please add it in: Settings -> Secrets and variables -> Actions"
+            exit 1
+          fi
+          echo "VITE_API_BASE is set."
+
       - name: Build
         env:
           VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
