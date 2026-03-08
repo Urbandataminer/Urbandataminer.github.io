@@ -1,13 +1,10 @@
-﻿import React, { useState } from 'react';
-import { Database, MessageSquareText } from 'lucide-react';
+﻿import React from 'react';
+import { Database } from 'lucide-react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { DatasetExplorer } from './components/DatasetExplorer';
-import { ChatView } from './components/ChatView';
-
-type ViewMode = 'explorer' | 'chat';
+import { DatasetDetail } from './components/DatasetDetail';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewMode>('explorer');
-
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
       {/* Navigation Rail */}
@@ -16,14 +13,8 @@ const App: React.FC = () => {
            <span className="font-bold text-lg">U</span>
         </div>
 
-        <button 
-          onClick={() => setCurrentView('explorer')}
-          className={`
-            w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 group relative
-            ${currentView === 'explorer' 
-              ? 'bg-white/10 text-white shadow-inner' 
-              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}
-          `}
+        <button
+          className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 group relative bg-white/10 text-white shadow-inner"
           title="Dataset Explorer"
         >
           <Database size={20} />
@@ -32,31 +23,15 @@ const App: React.FC = () => {
             Data Explorer
           </span>
         </button>
-
-        <button 
-          onClick={() => setCurrentView('chat')}
-          className={`
-            w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 group relative
-            ${currentView === 'chat' 
-              ? 'bg-white/10 text-white shadow-inner' 
-              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}
-          `}
-          title="PDF AI Assistant"
-        >
-          <MessageSquareText size={20} />
-          <span className="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-            PDF AI Chat
-          </span>
-        </button>
       </div>
 
       {/* Main View Area */}
       <div className="flex-1 h-full min-w-0 bg-white">
-        {currentView === 'explorer' ? (
-          <DatasetExplorer />
-        ) : (
-          <ChatView />
-        )}
+        <Routes>
+          <Route path="/" element={<DatasetExplorer />} />
+          <Route path="/dataset/:id" element={<DatasetDetail />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
     </div>
   );

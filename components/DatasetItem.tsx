@@ -1,5 +1,6 @@
 import React from 'react';
-import { ExternalLink, Calendar, MapPin, Tag, FileText, Hash } from 'lucide-react';
+import { ExternalLink, Calendar, MapPin, Tag, Hash, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Dataset } from '../types';
 
 interface DatasetItemProps {
@@ -7,19 +8,41 @@ interface DatasetItemProps {
 }
 
 export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
+  const navigate = useNavigate();
+
+  const toDetail = `/dataset/${encodeURIComponent(String(dataset.id))}`;
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement | null;
+    // Let anchors/Links behave normally (e.g., Data URL).
+    if (target?.closest('a')) return;
+    navigate(toDetail, { state: { dataset } });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate(toDetail, { state: { dataset } });
+    }
+  };
+
   return (
-    <div className="bg-white p-6 rounded-sm border-b border-gray-200 hover:bg-gray-50 transition-colors">
+    <div
+      className="bg-white p-6 rounded-sm border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+    >
       {/* Title */}
       <div className="mb-3">
-        <a 
-          href={dataset.URL !== 'N/A' ? dataset.URL : '#'} 
-          target={dataset.URL !== 'N/A' ? "_blank" : "_self"}
-          rel="noopener noreferrer" 
-          className={`text-xl font-bold text-blue-700 flex items-center gap-2 ${dataset.URL !== 'N/A' ? 'hover:underline' : 'cursor-default'}`}
+        <Link
+          to={toDetail}
+          state={{ dataset }}
+          className="text-xl font-bold text-blue-700 flex items-center gap-2 hover:underline"
         >
           {dataset.Data_Name}
-          {dataset.URL !== 'N/A' && <ExternalLink size={16} className="text-gray-400" />}
-        </a>
+        </Link>
       </div>
 
       {/* Summary */}
@@ -54,15 +77,44 @@ export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
             </div>
         </div>
 
+        {/* Need Author Contact */}
+        <div className="flex items-start gap-2">
+            <User size={14} className="mt-0.5 text-amber-500 shrink-0" />
+            <div>
+                <span className="font-semibold text-gray-700">Need Author Contact:</span>{' '}
+                {dataset.Need_Author_Contact === true ? 'Yes' : dataset.Need_Author_Contact === false ? 'No' : 'N/A'}
+            </div>
+        </div>
+
         {/* Geographic Coverage */}
         <div className="flex items-start gap-2">
             <MapPin size={14} className="mt-0.5 text-green-500 shrink-0" />
             <div>
-                <span className="font-semibold text-gray-700">Region:</span> {dataset.Geographic_Coverage}
+                <span className="font-semibold text-gray-700">Geographic Coverage:</span> {dataset.Geographic_Coverage}
             </div>
         </div>
 
-        {/* Paper URL */}
+        {/* Data URL */}
+        <div className="flex items-start gap-2">
+            <ExternalLink size={14} className="mt-0.5 text-blue-500 shrink-0" />
+            <div>
+                <span className="font-semibold text-gray-700">Data URL:</span> 
+                {dataset.URL !== 'N/A' ? (
+                  <a 
+                    href={dataset.URL} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline ml-1"
+                  >
+                    {dataset.URL}
+                  </a>
+                ) : (
+                  <span className="text-gray-400 ml-1">N/A</span>
+                )}
+            </div>
+        </div>
+        
+        {/* Paper URL 暂时不需要，先注释掉
         <div className="flex items-start gap-2">
             <FileText size={14} className="mt-0.5 text-gray-400 shrink-0" />
             <div>
@@ -81,6 +133,7 @@ export const DatasetItem: React.FC<DatasetItemProps> = ({ dataset }) => {
                 )}
             </div>
         </div>
+        */}
       </div>
     </div>
   );

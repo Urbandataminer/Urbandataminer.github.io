@@ -11,12 +11,16 @@ interface SidebarProps {
   selectedSubCategory: string | null;
   onSelectSubCategory: (sub: string | null) => void;
   
-  selectedTimeCoverage: string | null;
-  onSelectTimeCoverage: (time: string | null) => void;
+  selectedYearBucket: string | null;
+  onSelectYearBucket: (yb: string | null) => void;
+
+  selectedCountry: string | null;
+  onSelectCountry: (country: string | null) => void;
 
   categoryCounts: Record<string, number>;
   subCategoryCounts: Record<string, number>;
-  timeCoverageCounts: Record<string, number>;
+  yearBucketCounts: Record<string, number>;
+  countryCounts: Record<string, number>;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ 
@@ -29,18 +33,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
   selectedSubCategory,
   onSelectSubCategory,
   
-  selectedTimeCoverage,
-  onSelectTimeCoverage,
+  selectedYearBucket,
+  onSelectYearBucket,
+
+  selectedCountry,
+  onSelectCountry,
 
   categoryCounts,
   subCategoryCounts,
-  timeCoverageCounts
+  yearBucketCounts,
+  countryCounts
 }) => {
   // Collapsible sections state
   const [expandedSections, setExpandedSections] = useState({
     category: true,
     subCategory: true,
-    timeCoverage: true
+    yearBucket: true,
+    country: true
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -79,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="text"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Enter keywords/arXiv id"
+              placeholder="Please tell me your demand"
               className="w-full pl-3 pr-4 py-2 bg-white border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             />
         </div>
@@ -138,21 +147,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
         </section>
 
-        {/* Filter by Time Coverage */}
+        {/* Filter by Year (bucketed) */}
         <section>
             <button 
-                onClick={() => toggleSection('timeCoverage')}
+                onClick={() => toggleSection('yearBucket')}
                 className="flex items-center justify-between w-full text-left mb-2 group"
             >
-                <h3 className="text-base font-bold text-gray-800 group-hover:text-blue-600 transition-colors">Filter by Time Coverage</h3>
-                {expandedSections.timeCoverage ? <ChevronDown size={16} className="text-gray-400"/> : <ChevronRight size={16} className="text-gray-400"/>}
+                <h3 className="text-base font-bold text-gray-800 group-hover:text-blue-600 transition-colors">Filter by Year</h3>
+                {expandedSections.yearBucket ? <ChevronDown size={16} className="text-gray-400"/> : <ChevronRight size={16} className="text-gray-400"/>}
             </button>
             
-            {expandedSections.timeCoverage && (
+            {expandedSections.yearBucket && (
                 <div className="space-y-1 pl-1">
-                     {renderFilterItem('All Time Periods', Object.values(timeCoverageCounts).reduce((a,b)=>a+b, 0), selectedTimeCoverage === null, () => onSelectTimeCoverage(null))}
-                    {Object.entries(timeCoverageCounts).map(([time, count]) => (
-                        renderFilterItem(time, count, selectedTimeCoverage === time, () => onSelectTimeCoverage(time === selectedTimeCoverage ? null : time))
+                     {renderFilterItem('All Years', Object.values(yearBucketCounts).reduce((a,b)=>a+b, 0), selectedYearBucket === null, () => onSelectYearBucket(null))}
+                    {Object.entries(yearBucketCounts)
+                      .sort(([a],[b]) => b.localeCompare(a)) // rough: "2020s" before "2010s"
+                      .map(([yb, count]) => (
+                        renderFilterItem(yb, count, selectedYearBucket === yb, () => onSelectYearBucket(yb === selectedYearBucket ? null : yb))
+                    ))}
+                </div>
+            )}
+        </section>
+
+        {/* Filter by Country */}
+        <section>
+            <button 
+                onClick={() => toggleSection('country')}
+                className="flex items-center justify-between w-full text-left mb-2 group"
+            >
+                <h3 className="text-base font-bold text-gray-800 group-hover:text-blue-600 transition-colors">Filter by Country</h3>
+                {expandedSections.country ? <ChevronDown size={16} className="text-gray-400"/> : <ChevronRight size={16} className="text-gray-400"/>}
+            </button>
+            
+            {expandedSections.country && (
+                <div className="space-y-1 pl-1">
+                     {renderFilterItem('All Countries', Object.values(countryCounts).reduce((a,b)=>a+b, 0), selectedCountry === null, () => onSelectCountry(null))}
+                    {Object.entries(countryCounts)
+                      .sort(([a],[b]) => {
+                        const pin = (x: string) => (x === 'Global' ? 0 : x === 'Multi' ? 1 : x === 'Unknown' ? 2 : 3);
+                        const pa = pin(a), pb = pin(b);
+                        if (pa !== pb) return pa - pb;
+                        return a.localeCompare(b);
+                      })
+                      .map(([c, count]) => (
+                        renderFilterItem(c, count, selectedCountry === c, () => onSelectCountry(c === selectedCountry ? null : c))
                     ))}
                 </div>
             )}

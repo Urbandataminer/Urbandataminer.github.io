@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# --- do NOT publish backend / big assets to GitHub Pages repo ---
+backend/
+public/all_datasets.json
+metadata.json
+cloudflared
+web.zip

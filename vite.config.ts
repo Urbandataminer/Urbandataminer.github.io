@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        proxy: {
+          // Dev only: forward API calls to FastAPI
+          '/init': 'http://localhost:8000',
+          '/search': 'http://localhost:8000',
+          '/health': 'http://localhost:8000',
+          '/datasets': 'http://localhost:8000',
+          '/dataset': 'http://localhost:8000',
+        },
       },
       plugins: [react()],
       define: {
