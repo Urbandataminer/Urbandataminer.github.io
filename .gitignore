@@ -37,3 +37,6 @@ backend/*.faiss
 backend/__pycache__/
 backend/*.log
 public/all_datasets.json.bak
+
+# backups
+public/all_datasets.json.bak
