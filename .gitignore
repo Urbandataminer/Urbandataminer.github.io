@@ -29,3 +29,10 @@ public/all_datasets.json
 metadata.json
 cloudflared
 web.zip
+
+# --- ignore backend model/index artifacts ---
+backend/models/
+backend/vector_index.faiss
+backend/*.faiss
+backend/__pycache__/
+backend/*.log
